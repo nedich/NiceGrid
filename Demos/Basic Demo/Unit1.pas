@@ -35,6 +35,7 @@ type
     procedure NiceGrid1InsertRow(Sender: TObject; ARow: Integer);
     procedure Button4Click(Sender: TObject);
     procedure CheckBox6Click(Sender: TObject);
+    procedure NiceGrid1EditorCreated(Sender: TNiceGrid; EditorControl: TWinControl);
   private
     { Private declarations }
   public
@@ -45,6 +46,9 @@ var
   Form1: TForm1;
 
 implementation
+
+uses
+  u_utlClassHelpers;
 
 {$R *.dfm}
 {$R XPTheme.res}
@@ -118,6 +122,21 @@ procedure TForm1.NiceGrid1DrawHeader(Sender: TObject; ACanvas: TCanvas;
 begin
   if (Str = 'One')
     then ACanvas.Font.Color := clRed;
+end;
+
+procedure TForm1.NiceGrid1EditorCreated(Sender: TNiceGrid; EditorControl: TWinControl);
+var
+  save: string;
+begin
+  if(EditorControl is TComboBox) then
+    with TComboBox(EditorControl), Items do begin
+      save := TComboBox(EditorControl).text;
+      Add('test 1');
+      Add('test 2');      
+      Add('test 3');
+      Style := csDropDownList;
+      SelectItem(save);
+    end;
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);

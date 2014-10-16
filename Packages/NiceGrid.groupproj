@@ -1,0 +1,48 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{D33807E1-FE49-4219-88A9-947C63F24972}</ProjectGuid>
+		</PropertyGroup>
+		<ItemGroup>
+			<Projects Include="NiceGridXE.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="..\Demos\Basic Demo\NiceGridBasicDemo.dproj">
+				<Dependencies>NiceGridXE.dproj</Dependencies>
+			</Projects>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Default.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Default.Personality/>
+			</BorlandProject>
+		</ProjectExtensions>
+		<Target Name="NiceGridXE">
+			<MSBuild Projects="NiceGridXE.dproj"/>
+		</Target>
+		<Target Name="NiceGridXE:Clean">
+			<MSBuild Targets="Clean" Projects="NiceGridXE.dproj"/>
+		</Target>
+		<Target Name="NiceGridXE:Make">
+			<MSBuild Targets="Make" Projects="NiceGridXE.dproj"/>
+		</Target>
+		<Target Name="NiceGridBasicDemo" DependsOnTargets="NiceGridXE">
+			<MSBuild Projects="..\Demos\Basic Demo\NiceGridBasicDemo.dproj"/>
+		</Target>
+		<Target Name="NiceGridBasicDemo:Clean" DependsOnTargets="NiceGridXE:Clean">
+			<MSBuild Targets="Clean" Projects="..\Demos\Basic Demo\NiceGridBasicDemo.dproj"/>
+		</Target>
+		<Target Name="NiceGridBasicDemo:Make" DependsOnTargets="NiceGridXE:Make">
+			<MSBuild Targets="Make" Projects="..\Demos\Basic Demo\NiceGridBasicDemo.dproj"/>
+		</Target>
+		<Target Name="Build">
+			<CallTarget Targets="NiceGridXE;NiceGridBasicDemo"/>
+		</Target>
+		<Target Name="Clean">
+			<CallTarget Targets="NiceGridXE:Clean;NiceGridBasicDemo:Clean"/>
+		</Target>
+		<Target Name="Make">
+			<CallTarget Targets="NiceGridXE:Make;NiceGridBasicDemo:Make"/>
+		</Target>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
+	</Project>

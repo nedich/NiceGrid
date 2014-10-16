@@ -87,9 +87,9 @@ end;
 
 procedure Register; 
 begin
-  RegisterComponents('priyatna.org', [TNiceGrid, TNiceGridSync]);
+  RegisterComponents('priyatna.org', [TNiceGrid]);
   RegisterComponentEditor(TNiceGrid, TNiceGridEditor);
-  RegisterComponentEditor(TNiceGridSync, TNiceGridEditor);
+  //RegisterComponentEditor(TNiceGridSync, TNiceGridEditor);
 end;
 
 end.

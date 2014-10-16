@@ -1,9 +1,9 @@
 object Form1: TForm1
   Left = 252
   Top = 121
-  Width = 638
-  Height = 543
   Caption = 'NiceGrid Demo - priyatna.org'
+  ClientHeight = 505
+  ClientWidth = 622
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,8 +14,8 @@ object Form1: TForm1
   Position = poDesktopCenter
   OnCreate = FormCreate
   DesignSize = (
-    630
-    509)
+    622
+    505)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -35,8 +35,8 @@ object Form1: TForm1
       'r.'
   end
   object NiceGrid1: TNiceGrid
-    Left = 16
-    Top = 56
+    Left = 17
+    Top = 62
     Width = 597
     Height = 370
     Cursor = 1
@@ -45,6 +45,7 @@ object Form1: TForm1
     AutoAddRow = True
     DefColWidth = 100
     GridColor = clSilver
+    ShowGrid = False
     HeaderLine = 2
     HeaderColor = 14614528
     HeaderLightColor = 16744448
@@ -59,34 +60,33 @@ object Form1: TForm1
     FooterFont.Height = -11
     FooterFont.Name = 'MS Sans Serif'
     FooterFont.Style = []
-    SelectionColor = 13816575
+    SelectionColor = clNone
     Columns = <
       item
         Title = 'Merged;Multilined|Merged;Multilined'
         Footer = 'Footer 0'
         Width = 100
         CanResize = False
+        ReadOnly = True
+        EditorType = nietEdit
       end
       item
         Title = 'First Group|One'
         Footer = 'Footer 1'
         Width = 100
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
         Color = 14024703
         HorzAlign = haCenter
         Strings.Strings = (
           'Satu'
           'Dua'
           'Tiga')
+        EditorType = nietCombo
       end
       item
         Title = 'First Group|Two'
         Footer = 'Footer 2'
         Width = 100
+        EditorType = nietEdit
       end
       item
         Title = 'Second Group|One'
@@ -94,12 +94,14 @@ object Form1: TForm1
         Width = 100
         Color = clWhite
         HorzAlign = haRight
+        EditorType = nietEdit
       end
       item
         Title = 'Second Group|Two'
         Footer = 'Footer 4'
         Width = 100
         HorzAlign = haCenter
+        EditorType = nietEdit
       end>
     GutterKind = gkNumber
     GutterWidth = 40
@@ -111,6 +113,8 @@ object Form1: TForm1
     ShowFooter = True
     OnDrawHeader = NiceGrid1DrawHeader
     OnInsertRow = NiceGrid1InsertRow
+    OnEditorCreated = NiceGrid1EditorCreated
+    Options = [ngoThemed]
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
