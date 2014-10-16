@@ -1,0 +1,311 @@
+<html>
+<title>NiceGrid Component</title>
+<style type="text/css">
+<!--
+body, td {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 9pt}
+-->
+</style>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="6"><b><font size="4">NiceGrid 
+  v2.20</font></b></font><br>
+  &copy; 2003 - 2007, Priyatna<br>
+  Bandung - Indonesia</p>
+<p><a href="http://www.priyatna.org/">http://www.priyatna.org/</a><br>
+  <a href="mailto:me@priyatna.org">mailto:me@priyatna.org</a></p>
+<p><a href="#intro">Introduction</a><br>
+  <a href="#license">License</a><br>
+  <a href="#history">Version History</a><br>
+  <a href="#install">Installation</a><br>
+  <a href="#headers">Working with Headers</a><br>
+  <a href="#contact">Contacts</a></p>
+<p><font size="1">Version: 2.20 <br>
+  Release Date: November 2nd, 2003<br>
+  </font></p>
+<p>&nbsp; </p>
+<font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b><a name="intro"></a></b></font>
+<hr>
+<p></p>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b>Introduction</b></font></p>
+<p>NiceGrid is a Delphi component that aimed to be a standard string grid replacement. 
+  It is written from scratch, not descended from TStringGrid. The main reason 
+  why I write this component is to have a grid component that <b>nice</b> and 
+  <b>smooth</b>. Here's some feature of NiceGrid:</p>
+<ul>
+  <li>Headers can be merged and or multilined.</li>
+  <li>Smooth scrolling, not aligned to top left cell coordinate.</li>
+  <li>All aspect of grid colors can be customized: header light color, header 
+    dark color, header color, grid color, text color, etc.; resulting a real nice 
+    looking grid.</li>
+  <li>Alternate row color.</li>
+  <li>Can be customized at design time.</li>
+  <li>Each column can have its own horizontal and vertical alignment, color, and 
+    font.</li>
+  <li>Each column can be hidden.</li>
+  <li>Can be auto fit to width.</li>
+  <li>Can be auto calculate column width.</li>
+  <li>BeginUpdate and EndUpdate method for bulk cells access.</li>
+</ul>
+<p></p>
+<p></p>
+<p></p>
+<p>Since it is a new component, there are several main differences between NiceGrid 
+  and TStringGrid:</p>
+<ul>
+  <li>Headers are excluded from cells, unlike TStringGrid that treats fixed rows 
+    as regular cells (Row 0, for example), Cells[0,0] in NiceGrid will access 
+    the top left editable cells, not fixed cell.<br>
+    <br>
+  </li>
+  <li>The only way to access the data is using Cells property or using direct 
+    array referencing style: NiceGrid1[0,0]. There are not (yet) Cols, or Rows 
+    property.<br>
+    <br>
+  </li>
+  <li>FixedRows -&gt; Header, FixedCols -&gt; Gutter.</li>
+</ul>
+<p>&nbsp;</p>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b><a name="license"></a></b></font> 
+</p>
+<hr>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p> </p>
+<p></p>
+<p></p>
+<p></p>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b>License</b></font></p>
+<p>This library is released under Mozilla Public License. You can use it in your 
+  freeware, shareware or commercial softwares. You can send your modification 
+  to me, and if I decide to include it in the main distribution, I will add your 
+  name as a contributor. You can read full licensing information <a href="License.txt">here</a>.</p>
+<p>&nbsp; </p>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b><a name="history"></a></b></font> 
+</p>
+<hr>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p> </p>
+<p></p>
+<p></p>
+<p></p>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b>Version History</b></font></p>
+<p><b>Version 2.20</b></p>
+<ul>
+  <li>Bug fixed: OnCellChange event and friends only fired by user input, not 
+    by code (It seems that this behavior conforms with VCL design. I just get 
+    the point. ;-)<br>
+    <br>
+  </li>
+  <li>Bug fixed: messing up with accelerator keys. NiceGrid can't capture chars 
+    that already defined as accelerators of other control. This is fixed now.<br>
+    <br>
+  </li>
+  <li>C++ Builder port by C. S. Phua &lt;csphua@teledynamics.com.my&gt;.<br>
+    <br>
+  </li>
+</ul>
+<p><b>Version 2.10</b></p>
+<ul>
+  <li>Problems in clipboard operations with some hidden columns, fixed.<br>
+    <br>
+  </li>
+  <li>OnAddRow event added, makes possible to set default values to new added 
+    row.<br>
+    <br>
+  </li>
+  <li>DeleteRow method added.<br>
+    <br>
+  </li>
+  <li>CanResize property in Column, this will control column width when FitToWidth 
+    property is set.<br>
+    <br>
+  </li>
+  <li>Some drawing enhachements.<br>
+    <br>
+  </li>
+</ul>
+<p><b>Version 2.00</b></p>
+<ul>
+  <li>Bitmap buffering is removed. Believe me, this is not as easy as I thought. 
+    <br>
+    <br>
+  </li>
+  <li>Lot of enhanchement in editing capabilities and clipboard operations, most 
+    of them are adapted from well-known Microsoft Excel&#153;. <br>
+    <br>
+  </li>
+  <li> Headers Title is more flexible now. It doesn't have to be complete. Just 
+    remember two basic rules: '<b>;</b>' for multiline and '<b>|</b>' for each 
+    header cell. Header and gutter have their own font.<br>
+    <br>
+  </li>
+  <li>Fill Down and Fill Right feature. This feature is actually created for my 
+    own purpose, but I think it's not a bad idea. To fill down a column, try to 
+    type something and then end with '<b>*</b>' and press ENTER. To fill right 
+    a row, use '<b>&gt;</b>'.<br>
+    <br>
+  </li>
+  <li>Each column can be hidden. But use this feature wisely, because paste operation 
+    (from clipboard) will be applied also to hidden columns. It may make confuse 
+    end-user. I'll try to patch this later.<br>
+    <br>
+  </li>
+  <li>Cell editing can be done at design time via Column.Strings property.<br>
+    <br>
+  </li>
+  <li>Filter, Validation and Notification features: OnFilterChar, OnValidate, 
+    OnCellChanging, OnCellChange events; also EnableValidation - DisableValidation 
+    methods.</li>
+</ul>
+<p>&nbsp; </p>
+<font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b><a name="install"></a></b></font>
+<hr>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b>Installation</b></font></p>
+<p>There is no special process to install it on Delphi. Just open <b>NiceGridD7.dpk</b> 
+  on Delphi IDE and press Install button. I use Delphi 7. If you use another Delphi 
+  version, you may have to make some minor changes.</p>
+<p>The component will appear in <b>priyatna.org</b> tab.</p>
+<p>&nbsp;</p>
+<font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b><a name="headers"></a></b></font>
+<hr>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b>Working with 
+  Headers</b></font></p>
+<p>All features explained below are available at design time, but I will cover 
+  it using codes, for easy following.</p>
+<p>NiceGrid will automatically scan column title and make appropriate merging 
+  and multilining. The only thing you must do is setting each column's <b>Title</b> 
+  property. This is a <b>string</b> type property. To make a multilined caption, 
+  use '<b>;</b>' (semicolon) character. </p>
+<p>For example:</p>
+<blockquote> 
+  <blockquote>
+    <p> <font color="#FF0000">NiceGrid1.Columns[0].Title := <font color="#0000FF">'First 
+      Line;Second Line'</font>;</font></p>
+  </blockquote>
+</blockquote>
+<p>will make</p>
+<table width="200" border="1" align="center" cellpadding="0" cellspacing="0" height="42">
+  <tr>
+    <td>
+      <div align="center">First Line<br>
+        Second Line</div>
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p><b>HeaderLine</b> property determines how much line will be allocated for headers. 
+  Each line in headers can be set also via column's <b>Title </b>property, separated 
+  by '<b>|</b>' character.</p>
+<p>For example:</p>
+<blockquote> 
+  <blockquote>
+    <p><font color="#FF0000">NiceGrid1.HeaderLine := <font color="#0000FF">2</font>;<br>
+      NiceGrid1.Columns[0].Title := <font color="#0000FF">'First Line|Second Line'</font>;</font></p>
+  </blockquote>
+</blockquote>
+<p>will make</p>
+<table width="200" border="1" cellspacing="0" cellpadding="2" align="center">
+  <tr>
+    <td>
+      <div align="center">First Line</div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div align="center">Second Line</div>
+    </td>
+  </tr>
+</table>
+<div align="center"></div>
+<p>&nbsp;</p>
+<p>To merge two header cells, set each cell to exactly same value, including ';' 
+  characters if they are multilined.</p>
+<p>For example:</p>
+<blockquote> 
+  <blockquote> 
+    <p><font color="#FF0000">NiceGrid1.HeaderLine := <font color="#0000FF">2</font>;<br>
+      NiceGrid1.ColCount := <font color="#0000FF">2</font>;<br>
+      NiceGrid1.Columns[0].Title := <font color="#0000FF">'One|Two'</font>;<br>
+      NiceGrid1.Columns[1].Title := <font color="#0000FF">'One|Three'</font>;</font></p>
+  </blockquote>
+</blockquote>
+<p>will make</p>
+<table width="200" border="1" cellspacing="0" cellpadding="2" align="center">
+  <tr> 
+    <td colspan="2">
+      <div align="center">One</div>
+    </td>
+  </tr>
+  <tr> 
+    <td width="95"> 
+      <div align="center">Two</div>
+    </td>
+    <td width="91"> 
+      <div align="center">Three</div>
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>Using combination of '|' and ';' characters, we can make a complex header.</p>
+<p>For example:</p>
+<blockquote> 
+  <blockquote>
+    <p><font color="#FF0000">NiceGrid1.HeaderLine := <font color="#0000FF">2</font>;<br>
+      NiceGrid1.ColCount := <font color="#0000FF">5</font>;<br>
+      NiceGrid1.Columns[0].Title := <font color="#0000FF">'Merged;Multilined|Merged;Multilined'</font>;<br>
+      NiceGrid1.Columns[1].Title := <font color="#0000FF">'First Group|One'</font>;<br>
+      NiceGrid1.Columns[2].Title := <font color="#0000FF">'First Group|Two'</font>;<br>
+      NiceGrid1.Columns[3].Title := <font color="#0000FF">'Second Group|Three'</font>;<br>
+      NiceGrid1.Columns[4].Title := <font color="#0000FF">'Second Group|Four'</font>;</font><br>
+    </p>
+  </blockquote>
+</blockquote>
+<p>will make</p>
+<table width="80%" border="1" cellspacing="0" cellpadding="2" align="center">
+  <tr> 
+    <td rowspan="2"> 
+      <div align="center">Merged<br>
+        Multilined </div>
+    </td>
+    <td colspan="2"> 
+      <div align="center">First Group</div>
+    </td>
+    <td colspan="2"> 
+      <div align="center">Second Group</div>
+    </td>
+  </tr>
+  <tr> 
+    <td> 
+      <div align="center">One</div>
+    </td>
+    <td> 
+      <div align="center">Two</div>
+    </td>
+    <td> 
+      <div align="center">Three</div>
+    </td>
+    <td> 
+      <div align="center">Four</div>
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b><a name="contact"></a></b></font>
+<hr>
+<p><font face="Verdana, Arial, Helvetica, sans-serif" size="4"><b>Contacts</b></font></p>
+<p>Don't hesitate to report any bug or whish to me:<br>
+</p>
+<p>Priyatna<br>
+  Bandung - Indonesia</p>
+<p><a href="http://www.priyatna.org/">http://www.priyatna.org/</a><br>
+  <a href="mailto:me@priyatna.org">mailto:me@priyatna.org</a></p>
+<p>&nbsp;</p>
+</html>
