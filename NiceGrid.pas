@@ -235,7 +235,15 @@ type
 
   TOnEditorCreated = procedure (Sender: TNiceGrid; EditorControl: TWinControl) of object;
 
-  //TNiceGridSync = class;
+  TNiceGridRowsByIndexEnumerator = record
+    m_NiceGrid: TNiceGrid;
+    m_nRowIndex: Integer;
+    constructor Create(ANiceGrid: TNiceGrid);
+    function GetEnumerator: TNiceGridRowsByIndexEnumerator;
+    function MoveNext(): Boolean;
+    function GetCurrent(): Integer;
+    property Current: Integer read GetCurrent;
+  end;
 
   TNiceGrid = class(TCustomPanel)
   private
@@ -466,7 +474,7 @@ type
     procedure ClearMergeCells;
     procedure TryEdit;
     procedure EndEdit;
-
+    function RowsByIndex: TNiceGridRowsByIndexEnumerator;
   published
     property Enabled: Boolean read FEnabled write SetEnabled default True;
     property ColCount: Integer read GetColCount write SetColCount;
@@ -682,7 +690,12 @@ begin
   FGutterStrings := TStringList.Create;
   Mergeds := TList.Create;
 
+  FOptions := [ngoThemed];
+  
 end;
+
+
+
 
 destructor TNiceGrid.Destroy;
 begin
@@ -698,6 +711,9 @@ begin
   FGutterFont.Free;
   inherited Destroy;
 end;
+
+
+
 
 procedure TNiceGrid.CreateParams(var Params: TCreateParams);
 begin
@@ -1226,6 +1242,23 @@ begin
   R := Rect(-1, -1, FixedWidth, FixedHeight);
   DrawFixCell(R, '', FHeaderFont, FOnDrawHeader);
 end;
+
+
+
+function TNiceGrid.RowsByIndex: TNiceGridRowsByIndexEnumerator;
+{-----------------------------------------------------------------------------
+  Procedure: RowsByIndex
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: None
+  Result:    TNiceGridRowsByIndexEnumerator
+-----------------------------------------------------------------------------}
+begin
+  Result := TNiceGridRowsByIndexEnumerator.Create(self);
+end;
+
+
+
 
 procedure TNiceGrid.RenderFooter;
 var
@@ -4463,7 +4496,7 @@ begin
 
   l := Rc.Left;
   w := Rc.Right - Rc.Left;
-  t := 0;
+//  t := 0;
   h := Grid.Canvas.TextHeight('gM');
   
 //  case Column.FVertAlign of
@@ -4479,5 +4512,69 @@ begin
   setfocus;
   
 end;
+
+
+
+
+{ TNiceGridRowsByIndexEnumerator }
+
+constructor TNiceGridRowsByIndexEnumerator.Create(ANiceGrid: TNiceGrid);
+{-----------------------------------------------------------------------------
+  Procedure: Create
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: ANiceGrid: TNiceGrid
+  Result:    None
+-----------------------------------------------------------------------------}
+begin
+  m_nRowIndex := -1;
+  m_NiceGrid := ANiceGrid;
+end;
+
+
+
+function TNiceGridRowsByIndexEnumerator.GetCurrent: Integer;
+{-----------------------------------------------------------------------------
+  Procedure: GetCurrent
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: None
+  Result:    Integer
+-----------------------------------------------------------------------------}
+begin
+  Result := m_nRowIndex;
+end;
+
+
+
+function TNiceGridRowsByIndexEnumerator.GetEnumerator: TNiceGridRowsByIndexEnumerator;
+{-----------------------------------------------------------------------------
+  Procedure: GetEnumerator
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: None
+  Result:    TNiceGridRowsByIndexEnumerator
+-----------------------------------------------------------------------------}
+begin
+  Result := Self;
+end;
+
+
+
+function TNiceGridRowsByIndexEnumerator.MoveNext: Boolean;
+{-----------------------------------------------------------------------------
+  Procedure: MoveNext
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: None
+  Result:    Boolean
+-----------------------------------------------------------------------------}
+begin
+  m_nRowIndex := m_nRowIndex + 1;
+  Result := m_nRowIndex >= m_NiceGrid.RowCount;
+end;
+
+
+
 
 end.
