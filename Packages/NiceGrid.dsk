@@ -1,27 +1,41 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\8.0\source\db\DBGrids.pas',0,1,2888,22,2915,0,0,,
-File_1=TSourceModule,'c:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\NiceGrid.pas',0,1,31,33,57,0,0,,
-File_2=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\8.0\SOURCE\VCL\Grids.pas',0,1,2837,43,2847,0,0,,{1,2860,2}
-File_3=TSourceModule,'C:\Work\Datapark\Win\D2011DelphiShared\u_utlDbGridDrawHelpers.pas',0,1,1,17,14,0,0,,
-File_4=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\u_frmManualRevenueEntry.pas',0,1,1,56,11,0,0,{{467,61},{569,3},{''}},{1,192,29}{2,852,5}
-File_5=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\GlobDB.pas',0,1,1,1,1,0,0,,
-File_6=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\u_frameMerSoldTickets.pas',0,1,97,37,113,0,0,,
-File_7=TSourceModule,'C:\Work\Datapark\Win\3rdPartyComponents\DelphiJavascript\delphi-javascript-read-only\jsintf.pas',0,1,3817,5,3817,0,0,,
-File_8=TSourceModule,'C:\Work\Datapark\Win\3rdPartyComponents\DelphiJavascript\delphi-javascript-read-only\demo\Unit12.pas',0,1,44,37,62,0,0,,
-File_9=TSourceModule,'C:\Work\Datapark\Win\3rdPartyComponents\DelphiJavascript\delphi-javascript-read-only\jsDbgServer.pas',0,1,495,50,517,0,0,,
-File_10=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\MainFrm.pas',0,1,3617,1,3639,0,0,{{5,0}
-File_11=TSourceModule,'C:\Work\Datapark\Win\D2011DelphiShared\u_basetypehelpers.pas',0,1,106,30,132,0,0,,
-File_12=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\u_frmGenericReports.pas',0,1,3153,43,3174,0,0,{{5,0}
-File_13=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\Accounts.pas',0,1,2543,51,2564,0,0,{{6,0}
-File_14=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\u_frmCharges.pas',0,1,1038,45,1062,0,0,,
+File_0=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\8.0\SOURCE\VCL\Controls.pas',0,1,6284,1,6305,0,0,,
+File_1=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\8.0\source\rtl\common\Classes.pas',0,1,4760,1,4782,0,0,,
+File_2=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\8.0\SOURCE\VCL\Forms.pas',0,1,6566,27,6584,0,0,,
+File_3=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\8.0\source\db\DBGrids.pas',0,1,2888,22,2915,0,0,,
+File_4=TSourceModule,'c:\program files (x86)\embarcadero\rad studio\8.0\SOURCE\VCL\Grids.pas',0,1,2837,43,2847,0,0,,{1
+File_5=TSourceModule,'C:\Work\Datapark\Win\D2011DelphiShared\u_utlDbGridDrawHelpers.pas',0,1,1,17,14,0,0,,
+File_6=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\u_frmManualRevenueEntry.pas',0,1,1,56,11,0,0,{{467,61}
+File_7=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\GlobDB.pas',0,1,1,1,1,0,0,,
+File_8=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\u_frameMerSoldTickets.pas',0,1,97,37,113,0,0,,
+File_9=TSourceModule,'C:\Work\Datapark\Win\3rdPartyComponents\DelphiJavascript\delphi-javascript-read-only\jsintf.pas',0,1,3817,5,3817,0,0,,
+File_10=TSourceModule,'C:\Work\Datapark\Win\3rdPartyComponents\DelphiJavascript\delphi-javascript-read-only\demo\Unit12.pas',0,1,44,37,62,0,0,,
+File_11=TSourceModule,'C:\Work\Datapark\Win\3rdPartyComponents\DelphiJavascript\delphi-javascript-read-only\jsDbgServer.pas',0,1,495,50,517,0,0,,
+File_12=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\MainFrm.pas',0,1,3617,1,3639,0,0,{{5,0}
+File_13=TSourceModule,'C:\Work\Datapark\Win\D2011DelphiShared\u_basetypehelpers.pas',0,1,106,30,132,0,0,,
+File_14=TSourceModule,'C:\Work\Datapark\Win\D2011CardMng3\u_frmGenericReports.pas',0,1,3153,43,3174,0,0,{{5,0}
 
 [Modules]
-Count=0
+Module0=C:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\NiceGrid.pas
+Module1=C:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\Demos\Basic Demo\Unit1.pas
+Count=2
 EditWindowCount=1
 
+[C:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\NiceGrid.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
+
+[C:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\Demos\Basic Demo\Unit1.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
+
 [EditWindow0]
-ViewCount=0
-CurrentView=-1
+ViewCount=2
+CurrentEditView=C:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\NiceGrid.pas
+View0=0
+View1=1
 PercentageSizes=1
 Create=1
 Visible=1
@@ -47,9 +61,31 @@ RightPanelData=00000800010100000000C41000000000000001D0070000000000000100000000C
 BottomPanelSize=1519
 BottomPanelClients=DockSite1,MessageView
 BottomPanelData=0000080001020100000009000000446F636B5369746531724500000000000002EF050000000000000100000000724500000F0000004D65737361676556696577466F726DFFFFFFFF
-BottomMiddlePanelSize=0
+BottomMiddlePanelSize=1444
 BottomMiddlePanelClients=DockSite0
-BottomMiddelPanelData=0000080001020100000009000000446F636B5369746530961D00000000000002F206000000000000FFFFFFFF
+BottomMiddelPanelData=000008000102000000002C2A00000000000002A40500000000000001000000002C2A000009000000446F636B5369746530FFFFFFFF
+
+[View0]
+CustomEditViewType=TEditView
+Module=C:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\Demos\Basic Demo\Unit1.pas
+CursorX=7
+CursorY=177
+TopLine=168
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\Demos\Basic Demo\Unit1.pas
+
+[View1]
+CustomEditViewType=TEditView
+Module=C:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\NiceGrid.pas
+CursorX=60
+CursorY=1387
+TopLine=1365
+LeftCol=1
+Elisions=
+Bookmarks={1,82,5}{2,4138,1}{3,153,46}{4,4261,8}{5,4539,1}
+EditViewName=C:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\NiceGrid.pas
 
 [Watches]
 Count=0
@@ -76,7 +112,9 @@ Dockable=1
 StayOnTop=0
 
 [Breakpoints]
-Count=0
+Count=2
+Breakpoint0='C:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\NiceGrid.pas',2993,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint1='C:\Work\Datapark\Win\3rdPartyComponents\NiceGrid\NiceGrid.pas',3979,'',0,1,'',1,0,0,'',1,'','','',0,''
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -341,12 +379,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2339
-Height=1240
+Width=6073
+Height=1038
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2339
-ClientHeight=1240
+ClientWidth=6073
+ClientHeight=1038
 TBDockHeight=1154
 LRDockWidth=3677
 Dockable=1
@@ -449,12 +487,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2339
-Height=1240
+Width=6073
+Height=1038
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2339
-ClientHeight=1240
+ClientWidth=6073
+ClientHeight=1038
 TBDockHeight=2317
 LRDockWidth=2823
 Dockable=1
@@ -468,12 +506,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2339
-Height=1240
+Width=6073
+Height=1038
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2339
-ClientHeight=1240
+ClientWidth=6073
+ClientHeight=1038
 TBDockHeight=3202
 LRDockWidth=2823
 Dockable=1
@@ -525,12 +563,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2339
-Height=1240
+Width=6073
+Height=1038
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2339
-ClientHeight=1240
+ClientWidth=6073
+ClientHeight=1038
 TBDockHeight=4827
 LRDockWidth=3562
 Dockable=1
@@ -544,12 +582,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2339
-Height=1240
+Width=6073
+Height=1038
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2339
-ClientHeight=1240
+ClientWidth=6073
+ClientHeight=1038
 TBDockHeight=4827
 LRDockWidth=3562
 Dockable=1
@@ -684,18 +722,18 @@ HostDockSite=DockBottomCenterPanel
 DockSiteType=1
 PercentageSizes=1
 Create=1
-Visible=0
+Visible=1
 Docked=1
 State=0
 Left=0
-Top=0
-Width=2339
-Height=1481
+Top=23
+Width=6073
+Height=1279
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2339
-ClientHeight=1481
-TBDockHeight=1481
+ClientWidth=6073
+ClientHeight=1279
+TBDockHeight=1279
 LRDockWidth=2339
 Dockable=1
 StayOnTop=0
@@ -749,7 +787,7 @@ Dockable=1
 StayOnTop=0
 TabPosition=1
 ActiveTabID=ProjectManager
-TabDockClients=StructureView,PropertyInspector,ProjectManager,ClassBrowserTool,TFileExplorerForm
+TabDockClients=StructureView,PropertyInspector,ProjectManager,TFileExplorerForm,ClassBrowserTool
 
 [DockSite3]
 HostDockSite=DockRightPanel
@@ -776,5 +814,5 @@ ActiveTabID=ToolForm
 TabDockClients=ToolForm,TemplateView
 
 [ActiveProject]
-ActiveProject=1
+ActiveProject=2
 

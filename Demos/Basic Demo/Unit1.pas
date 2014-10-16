@@ -39,11 +39,13 @@ type
     procedure NiceGrid1InsertRow(Sender: TObject; ARow: Integer);
     procedure Button4Click(Sender: TObject);
     procedure CheckBox6Click(Sender: TObject);
-    procedure NiceGrid1EditorCreated(Sender: TNiceGrid; EditorControl: TWinControl);
+    procedure NiceGrid1EditorCreated(AGrid: TNiceGrid; EditorControl: TWinControl);
     procedure xbThemedClick(Sender: TObject);
     procedure xbExcelClick(Sender: TObject);
     procedure xbMultiselectClick(Sender: TObject);
     procedure xbEnabledClick(Sender: TObject);
+    procedure NiceGrid1CellChanging(Sender: TObject; Col, Row: Integer; var CanChange: Boolean);
+    procedure NiceGrid1FormatText(Grid: TNiceGrid; X,Y: Integer; var CellText: string);
   private
     { Private declarations }
   public
@@ -125,6 +127,11 @@ begin
   CheckBox2Click(nil);
 end;
 
+procedure TForm1.NiceGrid1CellChanging(Sender: TObject; Col, Row: Integer; var CanChange: Boolean);
+begin
+  //
+end;
+
 procedure TForm1.NiceGrid1DrawHeader(Sender: TObject; ACanvas: TCanvas;
   Rc: TRect; Str: String; var Handled: Boolean);
 begin
@@ -132,19 +139,46 @@ begin
     then ACanvas.Font.Color := clRed;
 end;
 
-procedure TForm1.NiceGrid1EditorCreated(Sender: TNiceGrid; EditorControl: TWinControl);
-var
-  save: string;
+
+
+
+procedure TForm1.NiceGrid1EditorCreated(AGrid: TNiceGrid; EditorControl: TWinControl);
+{-----------------------------------------------------------------------------
+  Procedure: NiceGrid1EditorCreated
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: AGrid: TNiceGrid; EditorControl: TWinControl
+  Result:    None
+-----------------------------------------------------------------------------}
 begin
   if(EditorControl is TComboBox) then
     with TComboBox(EditorControl), Items do begin
-      save := TComboBox(EditorControl).text;
       Add('test 1');
       Add('test 2');      
       Add('test 3');
-      Style := csDropDownList;
-      SelectItem(save);
+      SelectItem(AGrid.cells[AGrid.Col, AGrid.Row]);
     end;
+end;
+
+
+
+
+procedure TForm1.NiceGrid1FormatText(Grid: TNiceGrid; X,Y: Integer; var CellText: string);
+{-----------------------------------------------------------------------------
+  Procedure: NiceGrid1FormatText
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: Grid: TNiceGrid; var CellText: string
+  Result:    None
+-----------------------------------------------------------------------------}
+var
+  m: extended;
+begin
+  if(x=4) then try
+    if(trystrtofloat(celltext, m)) then
+      celltext := format('%m',[m]);
+  except
+  end;
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);

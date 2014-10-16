@@ -56,9 +56,11 @@ type
 
   TNiceGridOption = (ngoMultiCellSelect, ngoThemed, ngoExcel);
   TNiceGridOptions = set of TNiceGridOption;
-  TNiceInplaceEditorType = (nietEdit, nietCombo);
+  TNiceGridInplaceEditorType = (ngetEdit, ngetEditInteger, ngetEditFloat, ngetCombo, ngetComboNoEditText);
 
   TNiceGrid = class;
+
+  TOnFormatText = procedure (Grid: TNiceGrid; X,Y: Integer; var CellText: string) of object;
 
   TNiceColumn = class(TCollectionItem)
   private
@@ -76,7 +78,8 @@ type
     FCanResize: Boolean;
     FHint: string;
     FReadOnly: Boolean;
-    FEditorType: TNiceInplaceEditorType;
+    FEditorType: TNiceGridInplaceEditorType;
+    FOnFormatText: TOnFormatText;
     function GetGrid: TNiceGrid;
     function IsFontStored: Boolean;
     procedure FontChange(Sender: TObject);
@@ -111,7 +114,8 @@ type
     property Strings: TStrings read FStrings write SetStrings;
     property CanResize: Boolean read FCanResize write FCanResize default True;
     property ReadOnly: Boolean read FReadOnly write FReadOnly default False;
-    property EditorType: TNiceInplaceEditorType read FEditorType write FEditorType;
+    property EditorType: TNiceGridInplaceEditorType read FEditorType write FEditorType;
+    property OnFormatText: TOnFormatText read FOnFormatText write FOnFormatText;
   end;
 
 
@@ -143,9 +147,10 @@ type
   
   TNiceInplaceEdit = class(TEdit, INiceGridInplaceEditor)
   private
-    FMediator: TNiceInplace;
-    FAlignment: THorzAlign;
-    CellX, CellY: Integer;
+    m_Mediator: TNiceInplace;
+    m_Alignment: THorzAlign;
+    m_nCellX, m_nCellY: Integer;
+    m_EditorType: TNiceGridInplaceEditorType;
     procedure SetAlignment(Value: THorzAlign);
   protected
     procedure CreateParams(var Params: TCreateParams); override;
@@ -153,7 +158,6 @@ type
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
     procedure KeyPress(var Key: Char); override;
     procedure WMKillFocus(var Msg: TWMKillFocus); message WM_KILLFOCUS;
-    //procedure WndProc(var Message: TMessage); override;
   public
     constructor Create(AMediator: TNiceInplace); reintroduce;
     procedure ShowEdit(X, Y: Integer);
@@ -162,35 +166,33 @@ type
 
   TNiceInplaceCombo = class(TComboBox, INiceGridInplaceEditor)
   private
-    FMediator: TNiceInplace;
-    FAlignment: THorzAlign;
-    FCellX, FCellY: Integer;
-    //procedure SetAlignment(Value: THorzAlign);
+    m_Mediator: TNiceInplace;
+    m_CellX, m_CellY: Integer;
   protected
     //procedure CreateParams(var Params: TCreateParams); override;
     procedure Change; override;
     //procedure KeyDown(var Key: Word; Shift: TShiftState); override;
-    //procedure KeyPress(var Key: Char); override;
+    procedure KeyPress(var Key: Char); override;
   public
     constructor Create(AMediator: TNiceInplace); reintroduce;
     procedure ShowEdit(X, Y: Integer);
     procedure HideEdit;
-    property Mediator: TNiceInplace read FMediator;
+    property Mediator: TNiceInplace read m_Mediator;
   end;
 
   TNiceInplace = class
   private
-    FGrid: TNiceGrid;
-    FControl: TWinControl;
+    m_Grid: TNiceGrid;
+    m_Control: TWinControl;
     function GetHandle: THandle;
     procedure Clear;
   public
     constructor Create(AGrid: TNiceGrid); reintroduce;
     procedure ShowEdit(X, Y: Integer);
     procedure HideEdit;
-    property Grid: TNiceGrid read FGrid;
+    property Grid: TNiceGrid read m_Grid;
     property Handle: THandle read GetHandle;
-    property Control: TWinControl read FControl;
+    property Control: TWinControl read m_Control;
   end;
 
   TMergeCell = class(TObject)
@@ -233,7 +235,7 @@ type
 
   TOnColRowChanged = procedure (Sender: TObject; Col, Row: Integer) of object;
 
-  TOnEditorCreated = procedure (Sender: TNiceGrid; EditorControl: TWinControl) of object;
+  TOnEditorCreated = procedure (Grid: TNiceGrid; EditorControl: TWinControl) of object;
 
   TNiceGridRowsByIndexEnumerator = record
     m_NiceGrid: TNiceGrid;
@@ -321,7 +323,8 @@ type
     FOnInsertRow: TOnRowEvent;
     FOnDeleteRow: TOnRowEvent;
     FOnCellAssignment: TOnCellAssignment;
-    FOnEditorCreated: TOnEditorCreated;
+    FOnEditorCreated: TOnEditorCreated;  //n@2014-10-16
+    FOnFormatText: TOnFormatText;    //n@2014-10-16
     FGutterStrings: TStrings;
     FShowFooter: Boolean;
     FFooterFont: TFont;
@@ -400,10 +403,8 @@ type
     function GetCell(X, Y: Integer): string;
     function SafeGetCell(X, Y: Integer): string;
     function GetCellColor(X, Y: Integer): TColor;
-    procedure DrawCell(X, Y: Integer);
-    function FastDrawCell(X, Y: Integer; IsEditing: Boolean): TPoint;
-//    procedure ForceHideCaret;
-//    procedure ForceShowCaret;
+    procedure DrawText(X, Y: Integer);
+    function FastDrawText(X, Y: Integer; IsEditing: Boolean): TPoint;
     procedure NormalizeVertOffset;
     procedure InvalidateCells;
     procedure InvalidateRightWard(Left: Integer);
@@ -519,6 +520,7 @@ type
     property OnDeleteRow: TOnRowEvent read FOnDeleteRow write FOnDeleteRow;
     property OnCellAssignment: TOnCellAssignment read FOnCellAssignment write FOnCellAssignment;
     property OnEditorCreated: TOnEditorCreated read FOnEditorCreated write FOnEditorCreated;
+    property OnFormatText: TOnFormatText read FOnFormatText write FOnFormatText;
     property Options: TNiceGridOptions read FOptions write SetOptions;
     property Font;
     property Anchors;
@@ -1026,6 +1028,10 @@ begin
   end;
 end;
 
+
+
+
+
 function DrawString(Canvas: TCanvas; Str: string; Rc: TRect;
   HorzAlign: THorzAlign; VertAlign: TVertAlign; IsEditing: Boolean): TPoint;
 var
@@ -1056,6 +1062,10 @@ begin
   // Return next cursor position
   Result := Point(Min(x + w + 1, Rc.Right), Rc.Top - 1);
 end;
+
+
+
+
 
 procedure DrawStringMulti(Canvas: TCanvas; Str: string; Rc: TRect;
   HorzAlign: THorzAlign; VertAlign: TVertAlign);
@@ -1285,7 +1295,15 @@ end;
 
 
 
+
 procedure TNiceGrid.DrawBackground(X, Y: Integer);
+{-----------------------------------------------------------------------------
+  Procedure: DrawBackground
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: X, Y: Integer
+  Result:    None
+-----------------------------------------------------------------------------}
 var
   R, Rc, Dummy: TRect;
   Column: TNiceColumn;
@@ -1323,11 +1341,21 @@ begin
 end;
 
 
-procedure TNiceGrid.DrawCell(X, Y: Integer);
+
+
+procedure TNiceGrid.DrawText(X, Y: Integer);
+{-----------------------------------------------------------------------------
+  Procedure: DrawText
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: X, Y: Integer
+  Result:    None
+-----------------------------------------------------------------------------}
 var
   R, Rc, Dummy: TRect;
   Column: TNiceColumn;
   Handled: Boolean;
+  CellText: string;
   
 begin
   Handled := False;
@@ -1340,7 +1368,6 @@ begin
     with Canvas do
     begin
       Font.Assign(Column.Font);
-      //HandleThemedFontColor;
       if not FEnabled
         then Font.Color := FGridColor;
       Pen.Color := FGridColor;
@@ -1349,15 +1376,19 @@ begin
       if Assigned(FOnDrawCell)
         then FOnDrawCell(Self, Canvas, X, Y, Rc, Handled);
 
+      CellText := SafeGetCell(x, y);
+        
+      if Assigned(FOnFormatText)
+        then FOnFormatText(Self, X, Y, CellText);
+
+      if Assigned(Columns[X].FOnFormatText)
+        then Columns[X].FOnFormatText(Self, X, Y, CellText);
+
       if not Handled then
       begin
-        Brush.Style := bsSolid;
-//        if FShowGrid
-//          then Rectangle(Rc)
-//          else FillRect(Rc);
         Brush.Style := bsClear;
         InflateRect(Rc, -4, -2);
-        DrawString(Canvas, SafeGetCell(x, y), Rc, Column.HorzAlign, Column.VertAlign, False);
+        DrawString(Canvas, CellText, Rc, Column.HorzAlign, Column.VertAlign, False);
       end;
 
     end;
@@ -1368,11 +1399,12 @@ end;
 
 
 
-function TNiceGrid.FastDrawCell(X, Y: Integer; IsEditing: Boolean): TPoint;
+function TNiceGrid.FastDrawText(X, Y: Integer; IsEditing: Boolean): TPoint;
 var
   R, Dummy: TRect;
   Handled: Boolean;
   Column: TNiceColumn;
+  CellText: string;
 begin
   Handled := False;          
   Result := Point(-1, -1);
@@ -1388,6 +1420,15 @@ begin
     end;
     if Assigned(FOnDrawCell)
       then FOnDrawCell(Self, Canvas, X, Y, R, Handled);
+      
+    CellText := SafeGetCell(x, y);
+        
+    if Assigned(FOnFormatText)
+      then FOnFormatText(Self, X, Y, CellText);
+
+    if Assigned(Columns[X].FOnFormatText)
+      then Columns[X].FOnFormatText(Self, X, Y, CellText);
+
     if not Handled then
     begin
       with Canvas do
@@ -1626,7 +1667,7 @@ begin
         begin
           if (Integer(GetObject(x, y)) <> MergeID) then 
           begin
-            DrawCell(X, Y);
+            DrawText(X, Y);
           end;
         end;
       end;           
@@ -1890,7 +1931,7 @@ begin
   end else
     t[Y] := Value;
   if not FUpdating
-    then FastDrawCell(X, Y, False);
+    then FastDrawText(X, Y, False);
 end;
 
 procedure TNiceGrid.SetCell(X, Y: Integer; Value: string);
@@ -1919,7 +1960,9 @@ begin
 
   isEditing := False;
   FEdit.HideEdit;
-  SetFocus;
+
+  if not (csDestroying in ComponentState) then
+    SetFocus;
 end;
 
 
@@ -2431,7 +2474,17 @@ begin
 
 end;
 
+
+
+
 procedure TNiceGrid.KeyPress(var Key: Char);
+{-----------------------------------------------------------------------------
+  Procedure: KeyPress
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: var Key: Char
+  Result:    None
+-----------------------------------------------------------------------------}
 var
   Pt: TPoint;
   Allowed: Boolean;
@@ -2448,43 +2501,21 @@ begin
 
   if not FReadOnly then
   begin
-
-    case Key of
-
-      Chr(VK_BACK):
-        begin
-          //ForceHideCaret;
-          BuffString := Copy(BuffString, 1, Length(BuffString) - 1);
-          InternalSetCell(FCol, FRow, BuffString, True);
-          EnsureVisible(FCol, FRow);
-          Pt := FastDrawCell(FCol, FRow, True);
-          SetCaretPos(Pt.X, Pt.Y);
-          //ForceShowCaret;
-        end;
-
-      Chr($20)..Chr($FF):
-        begin
-          Allowed := True;
-          if Assigned(FOnFilterChar)
-            then FOnFilterChar(Self, FCol, FRow, Key, Allowed);
-          if Allowed then
-          begin
-            //ForceHideCaret;
-            BuffString := BuffString + Key;
-            InternalSetCell(FCol, FRow, BuffString, True);
-            EnsureVisible(FCol, FRow);
-            Pt := FastDrawCell(FCol, FRow, True);
-            SetCaretPos(Pt.X, Pt.Y);
-            //ForceShowCaret;
-          end;
-
-        end;
-
+    Allowed := True;
+    if Assigned(FOnFilterChar)
+      then FOnFilterChar(Self, FCol, FRow, Key, Allowed);
+    if Allowed then
+    begin
+      TryEdit;
+      if(IsEditing) then
+        PostMessage(FEdit.control.Handle, WM_CHAR, Ord(key), 0);
     end;
-
   end;
 
 end;
+
+
+
 
 function TNiceGrid.GetHitTestInfo(X, Y: Integer): TGridHitTest;
 var
@@ -4050,9 +4081,9 @@ constructor TNiceInplaceEdit.Create(AMediator: TNiceInplace);
   Result:    None
 -----------------------------------------------------------------------------}
 begin
-  FMediator := AMediator;
-  inherited Create(FMediator.Grid);
-  FAlignment := haLeft;
+  m_Mediator := AMediator;
+  inherited Create(m_Mediator.Grid);
+  m_Alignment := haLeft;
   Parent := AMediator.Grid;
   ParentColor := False;
   BorderStyle := bsNone;
@@ -4068,18 +4099,17 @@ const
   Alignments: array [THorzAlign] of Cardinal = (ES_LEFT, ES_CENTER, ES_RIGHT);
 begin
   inherited CreateParams(Params);
-  Params.Style := Params.Style or Alignments[FAlignment];
+  Params.Style := Params.Style or Alignments[m_Alignment];
 end;
 
 procedure TNiceInplaceEdit.SetAlignment(Value: THorzAlign);
 begin
-  if (FAlignment <> Value) then
+  if (m_Alignment <> Value) then
   begin
-    FAlignment := Value;
+    m_Alignment := Value;
     RecreateWnd;
   end;
 end;
-
 
 
 
@@ -4097,15 +4127,12 @@ var
   l, t, w, h: Integer;
   Grid: TNiceGrid;
 begin
-
-//  if CaretVisible
-//    then HideCaret(Handle);
-//  CaretVisible := False;
-
-  Grid := FMediator.Grid;
+  Grid := m_Mediator.Grid;
   
-  CellX := X;
-  CellY := Y;
+  m_EditorType := Grid.Columns[X].EditorType;
+  
+  m_nCellX := X;
+  m_nCellY := Y;
   Column := Grid.FColumns[x];
   Color := Grid.GetCellColor(X, Y);
   SetAlignment(Column.FHorzAlign);
@@ -4115,7 +4142,7 @@ begin
   Rc := Grid.GetCellRect(X, Y);
   Rc := Grid.CellRectToClient(Rc);
 
-  if (FAlignment = haRight)
+  if (m_Alignment = haRight)
     then Rc.Right := Rc.Right + 1;
   InflateRect(Rc, -4, -3);
 
@@ -4133,7 +4160,6 @@ begin
   Show;
 
   SetFocus;
-
 end;
 
 
@@ -4148,7 +4174,7 @@ procedure TNiceInplaceEdit.WMKillFocus(var Msg: TWMKillFocus);
   Result:    None
 -----------------------------------------------------------------------------}
 begin
-  FMediator.Grid.EndEdit;
+  m_Mediator.Grid.EndEdit;
   inherited ;
 end;
 
@@ -4183,7 +4209,7 @@ end;
 procedure TNiceInplaceEdit.Change;
 begin
   inherited;
-  FMediator.Grid.InternalSetCell(CellX, CellY, Text, True);
+  m_Mediator.Grid.InternalSetCell(m_nCellX, m_nCellY, Text, True);
 end;
 
 
@@ -4202,7 +4228,7 @@ begin
     VK_ESCAPE, VK_RETURN, VK_UP, VK_DOWN:
     begin
       //HideEdit;
-      FMediator.Grid.EndEdit;
+      m_Mediator.Grid.EndEdit;
     end;
   else
     inherited;
@@ -4213,16 +4239,51 @@ end;
 
 
 procedure TNiceInplaceEdit.KeyPress(var Key: Char);
+{-----------------------------------------------------------------------------
+  Procedure: KeyPress
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: var Key: Char
+  Result:    None
+-----------------------------------------------------------------------------}
 var
   Allowed: Boolean;
+
+  procedure FilterKeyByEditorType;
+  begin
+    if(m_EditorType=ngetEdit) then
+      EXIT;
+      
+    if(m_EditorType=ngetEditFloat) and (key=FormatSettings.DecimalSeparator) then begin
+      /// do not allow second decimal separator in text
+      if(pos(key, text)>0) then 
+        Allowed := False;
+    end
+    else
+    if(m_EditorType in [ngetEditInteger, ngetEditFloat]) then begin
+      if not (key in [#13 {enter}, #8 {backspace}, #27 {escape}, '0'..'9']) then
+        Allowed := False;
+    end;
+  end;
+  
 begin
   Allowed := True;
-  if Assigned(FMediator.Grid.FOnFilterChar)
-    then FMediator.Grid.FOnFilterChar(Self, CellX, CellY, Key, Allowed);
+
+  FilterKeyByEditorType;
+
+  if(Allowed) then begin
+    if Assigned(m_Mediator.Grid.FOnFilterChar)
+      then m_Mediator.Grid.FOnFilterChar(Self, m_nCellX, m_nCellY, Key, Allowed);
+  end;
+  
   if (not Allowed) and (Key <> Chr(VK_BACK))
     then Key := Chr(0);
+    
   inherited;
 end;
+
+
+
 
 //{ TNiceGridSync }
 //
@@ -4319,9 +4380,9 @@ procedure TNiceInplace.Clear;
   Result:    None
 -----------------------------------------------------------------------------}
 begin
-  if(FControl<>nil) then begin
-    FControl.Free;
-    FControl := nil;
+  if(m_Control<>nil) then begin
+    m_Control.Free;
+    m_Control := nil;
   end;
 end;
 
@@ -4336,7 +4397,7 @@ constructor TNiceInplace.Create(AGrid: TNiceGrid);
   Result:    None
 -----------------------------------------------------------------------------}
 begin
-  FGrid := AGrid;
+  m_Grid := AGrid;
 
   inherited Create();
 end;
@@ -4352,8 +4413,8 @@ function TNiceInplace.GetHandle: THandle;
   Result:    THandle
 -----------------------------------------------------------------------------}
 begin
-  if(FControl<>nil) then
-    Result := FControl.Handle
+  if(m_Control<>nil) then
+    Result := m_Control.Handle
   else
     Result := INVALID_HANDLE_VALUE;
 end;
@@ -4369,7 +4430,7 @@ procedure TNiceInplace.HideEdit;
   Result:    None
 -----------------------------------------------------------------------------}
 begin
-  (FControl as INiceGridInplaceEditor).HideEdit;
+  (m_Control as INiceGridInplaceEditor).HideEdit;
 end;
 
 
@@ -4383,18 +4444,20 @@ procedure TNiceInplace.ShowEdit(X, Y: Integer);
   Result:    None
 -----------------------------------------------------------------------------}
 var
-  et: TNiceInplaceEditorType;
+  et: TNiceGridInplaceEditorType;
 begin
-  if(FControl<>nil) then 
+  if(m_Control<>nil) then
     Clear;
 
   et := Grid.Columns[X].EditorType;
   case et of
-    nietEdit: FControl := TNiceInplaceEdit.Create(self);
-    nietCombo: FControl := TNiceInplaceCombo.Create(self);
+    ngetCombo, ngetComboNoEditText: 
+      m_Control := TNiceInplaceCombo.Create(Self);
+    ngetEdit, ngetEditInteger, ngetEditFloat:
+      m_Control := TNiceInplaceEdit.Create(Self);
   end;
 
-  (FControl as INiceGridInplaceEditor).ShowEdit(X, Y);
+  (m_Control as INiceGridInplaceEditor).ShowEdit(X, Y);
 end;
 
 
@@ -4412,7 +4475,7 @@ procedure TNiceInplaceCombo.Change;
 -----------------------------------------------------------------------------}
 begin
   inherited;
-  FMediator.Grid.InternalSetCell(FCellX, FCellY, Text, True);
+  m_Mediator.Grid.InternalSetCell(m_CellX, m_CellY, Text, True);
 end;
 
 
@@ -4427,7 +4490,7 @@ constructor TNiceInplaceCombo.Create(AMediator: TNiceInplace);
   Result:    None
 -----------------------------------------------------------------------------}
 begin
-  FMediator := AMediator;
+  m_Mediator := AMediator;
 
   inherited Create(AMediator.Grid);
 
@@ -4456,6 +4519,24 @@ end;
 
 
 
+procedure TNiceInplaceCombo.KeyPress(var Key: Char);
+{-----------------------------------------------------------------------------
+  Procedure: KeyPress
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: var Key: Char
+  Result:    None
+-----------------------------------------------------------------------------}
+begin
+  if(key in [#13, #27]) then begin
+    Mediator.Grid.EndEdit;
+  end;
+
+  inherited;
+end;
+
+
+
 procedure TNiceInplaceCombo.ShowEdit(X, Y: Integer);
 {-----------------------------------------------------------------------------
   Procedure: ShowEdit
@@ -4469,27 +4550,31 @@ var
   Column: TNiceColumn;
   l, t, w, h: Integer;
   Grid: TNiceGrid;
+  et: TNiceGridInplaceEditorType;
 begin
-  FCellX := X;
-  FCellY := Y;
+  m_CellX := X;
+  m_CellY := Y;
 
-//  if CaretVisible
-//    then HideCaret(Handle);
-//  CaretVisible := False;
+  Grid := m_Mediator.Grid;
 
-  Grid := FMediator.Grid;
+  Clear;
+
+  et := Grid.Columns[X].EditorType;
+  if(et = ngetComboNoEditText) then
+    Style := csDropDownList
+  else
+    Style := csDropDown;
   
   Column := Grid.FColumns[x];
   Color := Grid.GetCellColor(X, Y);
-  //SetAlignment(Column.FHorzAlign);
-  Text := Grid.SafeGetCell(X, Y);
+  
   Font.Assign(Column.FFont);
 
   Rc := Grid.GetCellRect(X, Y);
   Rc := Grid.CellRectToClient(Rc);
 
-  if (FAlignment = haRight)
-    then Rc.Right := Rc.Right + 1;
+//  if (FAlignment = haRight)
+//    then Rc.Right := Rc.Right + 1;
     
   if(ngoExcel in Mediator.Grid.Options) then
     InflateRect(Rc, -4, -3);
@@ -4509,7 +4594,11 @@ begin
   SetBounds(l, t, w, h);
   Show;
 
-  setfocus;
+  if(et=ngetCombo) then begin
+    Text := Grid.SafeGetCell(X, Y);  
+  end;
+
+  SetFocus;
   
 end;
 
@@ -4571,7 +4660,7 @@ function TNiceGridRowsByIndexEnumerator.MoveNext: Boolean;
 -----------------------------------------------------------------------------}
 begin
   m_nRowIndex := m_nRowIndex + 1;
-  Result := m_nRowIndex >= m_NiceGrid.RowCount;
+  Result := m_nRowIndex < m_NiceGrid.RowCount;
 end;
 
 

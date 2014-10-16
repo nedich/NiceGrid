@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 121
   Caption = 'NiceGrid Demo - priyatna.org'
   ClientHeight = 515
-  ClientWidth = 622
+  ClientWidth = 701
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,7 +14,7 @@ object Form1: TForm1
   Position = poDesktopCenter
   OnCreate = FormCreate
   DesignSize = (
-    622
+    701
     515)
   PixelsPerInch = 96
   TextHeight = 13
@@ -36,11 +36,11 @@ object Form1: TForm1
   end
   object NiceGrid1: TNiceGrid
     Left = 17
-    Top = 62
-    Width = 597
+    Top = 63
+    Width = 676
     Height = 371
     Cursor = 1
-    ColCount = 5
+    ColCount = 6
     RowCount = 20
     AutoAddRow = True
     DefColWidth = 100
@@ -65,9 +65,10 @@ object Form1: TForm1
         Title = 'Merged;Multilined|Merged;Multilined'
         Footer = 'Footer 0'
         Width = 100
+        Color = clBtnFace
         CanResize = False
         ReadOnly = True
-        EditorType = nietEdit
+        EditorType = ngetEdit
       end
       item
         Title = 'First Group|One'
@@ -79,13 +80,13 @@ object Form1: TForm1
           'Satu'
           'Dua'
           'Tiga')
-        EditorType = nietCombo
+        EditorType = ngetEdit
       end
       item
         Title = 'First Group|Two'
         Footer = 'Footer 2'
         Width = 100
-        EditorType = nietEdit
+        EditorType = ngetEditInteger
       end
       item
         Title = 'Second Group|One'
@@ -93,14 +94,19 @@ object Form1: TForm1
         Width = 100
         Color = clWhite
         HorzAlign = haRight
-        EditorType = nietEdit
+        EditorType = ngetEditFloat
       end
       item
         Title = 'Second Group|Two'
         Footer = 'Footer 4'
         Width = 100
         HorzAlign = haCenter
-        EditorType = nietEdit
+        EditorType = ngetCombo
+      end
+      item
+        Title = 'ComboBox;no edit'
+        Width = 100
+        EditorType = ngetComboNoEditText
       end>
     GutterKind = gkNumber
     GutterWidth = 40
@@ -111,8 +117,10 @@ object Form1: TForm1
     GutterFont.Style = []
     ShowFooter = True
     OnDrawHeader = NiceGrid1DrawHeader
+    OnCellChanging = NiceGrid1CellChanging
     OnInsertRow = NiceGrid1InsertRow
     OnEditorCreated = NiceGrid1EditorCreated
+    OnFormatText = NiceGrid1FormatText
     Options = [ngoThemed]
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
