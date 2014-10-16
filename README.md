@@ -34,3 +34,5 @@ Since it is a new component, there are several main differences between NiceGrid
  * Added event OnEditorCreated(nicegrid, editcontrol)
  * Removed component TNiceGridSync
  * Removed additinal support for caret
+
+test
