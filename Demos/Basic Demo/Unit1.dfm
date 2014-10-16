@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 252
   Top = 121
   Caption = 'NiceGrid Demo - priyatna.org'
-  ClientHeight = 505
+  ClientHeight = 515
   ClientWidth = 622
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -15,7 +15,7 @@ object Form1: TForm1
   OnCreate = FormCreate
   DesignSize = (
     622
-    505)
+    515)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -38,7 +38,7 @@ object Form1: TForm1
     Left = 17
     Top = 62
     Width = 597
-    Height = 370
+    Height = 371
     Cursor = 1
     ColCount = 5
     RowCount = 20
@@ -60,7 +60,6 @@ object Form1: TForm1
     FooterFont.Height = -11
     FooterFont.Name = 'MS Sans Serif'
     FooterFont.Style = []
-    SelectionColor = clNone
     Columns = <
       item
         Title = 'Merged;Multilined|Merged;Multilined'
@@ -124,8 +123,8 @@ object Form1: TForm1
     TabOrder = 0
   end
   object CheckBox1: TCheckBox
-    Left = 16
-    Top = 438
+    Left = 15
+    Top = 440
     Width = 49
     Height = 17
     Anchors = [akLeft, akBottom]
@@ -137,7 +136,7 @@ object Form1: TForm1
   end
   object CheckBox2: TCheckBox
     Left = 88
-    Top = 438
+    Top = 440
     Width = 89
     Height = 17
     Anchors = [akLeft, akBottom]
@@ -149,7 +148,7 @@ object Form1: TForm1
   end
   object CheckBox3: TCheckBox
     Left = 192
-    Top = 438
+    Top = 440
     Width = 81
     Height = 17
     Anchors = [akLeft, akBottom]
@@ -159,7 +158,7 @@ object Form1: TForm1
   end
   object CheckBox4: TCheckBox
     Left = 288
-    Top = 438
+    Top = 440
     Width = 121
     Height = 17
     Anchors = [akLeft, akBottom]
@@ -169,7 +168,7 @@ object Form1: TForm1
   end
   object CheckBox5: TCheckBox
     Left = 424
-    Top = 438
+    Top = 440
     Width = 81
     Height = 17
     Anchors = [akLeft, akBottom]
@@ -181,7 +180,7 @@ object Form1: TForm1
   end
   object Button1: TButton
     Left = 272
-    Top = 473
+    Top = 483
     Width = 129
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -191,7 +190,7 @@ object Form1: TForm1
   end
   object Button2: TButton
     Left = 16
-    Top = 473
+    Top = 483
     Width = 121
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -201,7 +200,7 @@ object Form1: TForm1
   end
   object Button3: TButton
     Left = 144
-    Top = 473
+    Top = 483
     Width = 121
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -211,7 +210,7 @@ object Form1: TForm1
   end
   object Button4: TButton
     Left = 416
-    Top = 473
+    Top = 483
     Width = 161
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -221,12 +220,56 @@ object Form1: TForm1
   end
   object CheckBox6: TCheckBox
     Left = 528
-    Top = 438
+    Top = 440
     Width = 89
     Height = 17
     Anchors = [akLeft, akBottom]
     Caption = 'Show Footer'
     TabOrder = 10
     OnClick = CheckBox6Click
+  end
+  object xbThemed: TCheckBox
+    Left = 16
+    Top = 460
+    Width = 89
+    Height = 17
+    Anchors = [akLeft, akBottom]
+    Caption = 'Themed'
+    Checked = True
+    State = cbChecked
+    TabOrder = 11
+    OnClick = xbThemedClick
+  end
+  object xbExcel: TCheckBox
+    Left = 88
+    Top = 460
+    Width = 89
+    Height = 17
+    Anchors = [akLeft, akBottom]
+    Caption = 'Excel'
+    TabOrder = 12
+    OnClick = xbExcelClick
+  end
+  object xbMultiselect: TCheckBox
+    Left = 192
+    Top = 460
+    Width = 89
+    Height = 17
+    Anchors = [akLeft, akBottom]
+    Caption = 'Multiselect'
+    TabOrder = 13
+    OnClick = xbMultiselectClick
+  end
+  object xbEnabled: TCheckBox
+    Left = 288
+    Top = 460
+    Width = 89
+    Height = 17
+    Anchors = [akLeft, akBottom]
+    Caption = 'Enabled'
+    Checked = True
+    State = cbChecked
+    TabOrder = 14
+    OnClick = xbEnabledClick
   end
 end

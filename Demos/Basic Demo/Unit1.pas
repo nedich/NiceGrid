@@ -21,6 +21,10 @@ type
     Button3: TButton;
     Button4: TButton;
     CheckBox6: TCheckBox;
+    xbThemed: TCheckBox;
+    xbExcel: TCheckBox;
+    xbMultiselect: TCheckBox;
+    xbEnabled: TCheckBox;
     procedure CheckBox1Click(Sender: TObject);
     procedure CheckBox2Click(Sender: TObject);
     procedure CheckBox3Click(Sender: TObject);
@@ -36,6 +40,10 @@ type
     procedure Button4Click(Sender: TObject);
     procedure CheckBox6Click(Sender: TObject);
     procedure NiceGrid1EditorCreated(Sender: TNiceGrid; EditorControl: TWinControl);
+    procedure xbThemedClick(Sender: TObject);
+    procedure xbExcelClick(Sender: TObject);
+    procedure xbMultiselectClick(Sender: TObject);
+    procedure xbEnabledClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -158,6 +166,76 @@ procedure TForm1.NiceGrid1InsertRow(Sender: TObject; ARow: Integer);
 begin
   NiceGrid1.Cells[0, ARow] := 'New Row';
 end;
+
+
+
+procedure TForm1.xbEnabledClick(Sender: TObject);
+{-----------------------------------------------------------------------------
+  Procedure: xbEnabledClick
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: Sender: TObject
+  Result:    None
+-----------------------------------------------------------------------------}
+begin
+  NiceGrid1.Enabled := xbEnabled.Checked;
+end;
+
+
+
+
+procedure TForm1.xbExcelClick(Sender: TObject);
+{-----------------------------------------------------------------------------
+  Procedure: xbExcelClick
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: Sender: TObject
+  Result:    None
+-----------------------------------------------------------------------------}
+begin
+  if(xbExcel.Checked) then 
+    NiceGrid1.Options := NiceGrid1.Options + [ngoExcel]
+  else
+    NiceGrid1.Options := NiceGrid1.Options - [ngoExcel]
+end;
+
+
+
+
+procedure TForm1.xbMultiselectClick(Sender: TObject);
+{-----------------------------------------------------------------------------
+  Procedure: xbMultiselectClick
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: Sender: TObject
+  Result:    None
+-----------------------------------------------------------------------------}
+begin
+  if(xbMultiselect.Checked) then 
+    NiceGrid1.Options := NiceGrid1.Options + [ngoMultiCellSelect]
+  else
+    NiceGrid1.Options := NiceGrid1.Options - [ngoMultiCellSelect]
+end;
+
+
+
+
+procedure TForm1.xbThemedClick(Sender: TObject);
+{-----------------------------------------------------------------------------
+  Procedure: xbThemedClick
+  Author:    nbi
+  Date:      16-Oct-2014
+  Arguments: Sender: TObject
+  Result:    None
+-----------------------------------------------------------------------------}
+begin
+  if(xbThemed.Checked) then 
+    NiceGrid1.Options := NiceGrid1.Options + [ngoThemed]
+  else
+    NiceGrid1.Options := NiceGrid1.Options - [ngoThemed];
+end;
+
+
 
 procedure TForm1.Button4Click(Sender: TObject);
 begin

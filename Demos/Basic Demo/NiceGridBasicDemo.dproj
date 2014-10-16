@@ -104,7 +104,7 @@
 						<VersionInfoKeys Name="ProductName"/>
 						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
 						<VersionInfoKeys Name="Comments"/>
-						<VersionInfoKeys Name="Last Compile">2014-10-16 15:49</VersionInfoKeys>
+						<VersionInfoKeys Name="Last Compile">2014-10-16 16:21</VersionInfoKeys>
 					</VersionInfoKeys>
 				</Delphi.Personality>
 				<Platforms>

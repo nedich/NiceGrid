@@ -567,7 +567,7 @@ implementation
 {$R NiceCursors.res}
 
 uses
-  Math, Themes, UxTheme, u_Ini, MsgHlpr;
+  Math, Themes, UxTheme;
 
 const
   crPlus = 101;
@@ -1097,12 +1097,15 @@ begin
       do R := Rect(Left, Top, Right + 1, Bottom + 1);
     if PtInRect(R, Point(X, Y)) then
     begin
-      if not ((X = FCol) and (y = FRow)) and (FSelectionColor<>clNone)
+      if not ((X = FCol) and (y = FRow)) and (FSelectionColor<>clNone) and not (ngoThemed in Options)
         then cl := FSelectionColor;
     end;
   end;
   Result := cl;
 end;
+
+
+
 
 procedure TNiceGrid.DrawFixCell(Rc: TRect; Str: string; AFont: TFont; AEvent: TOnDrawHeaderEvent);
 var
@@ -1116,6 +1119,7 @@ begin
     if FFlat
       then Pen.Color := FHeaderDarkColor
       else Pen.Color := clBlack;
+    Pen.Width := 1;
     Brush.Style := bsSolid;
     Brush.Color := FHeaderColor;
     Font.Assign(AFont);
@@ -1144,6 +1148,9 @@ begin
     end;
   end;
 end;
+
+
+
 
 procedure TNiceGrid.RenderGutter;
 const
@@ -3659,10 +3666,12 @@ begin
   end;
 
   if(FOptions * [ngoThemed]) <> (value * [ngoThemed]) then begin
-    repaint;
+    
   end;
   
   FOptions := Value;
+
+  Repaint;
 end;
 
 

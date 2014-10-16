@@ -54,14 +54,6 @@
 			<DCCReference Include="..\NiceGrid.dcr"/>
 			<DCCReference Include="rtl.dcp"/>
 			<DCCReference Include="vcl.dcp"/>
-			<DCCReference Include="inet.dcp"/>
-			<DCCReference Include="soaprtl.dcp"/>
-			<DCCReference Include="dbrtl.dcp"/>
-			<DCCReference Include="nbi_singleunits.dcp"/>
-			<DCCReference Include="jclvcl.dcp"/>
-			<DCCReference Include="jcl.dcp"/>
-			<DCCReference Include="adortl.dcp"/>
-			<DCCReference Include="jediapi_singleunits.dcp"/>
 			<DCCReference Include="DesignIDE.dcp"/>
 			<DCCReference Include="..\NiceGrid.pas"/>
 			<DCCReference Include="..\NiceGridReg.pas"/>
@@ -113,7 +105,7 @@
 						<VersionInfoKeys Name="ProductName"/>
 						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
 						<VersionInfoKeys Name="Comments"/>
-						<VersionInfoKeys Name="Last Compile">2014-10-16 15:49</VersionInfoKeys>
+						<VersionInfoKeys Name="Last Compile">2014-10-16 16:21</VersionInfoKeys>
 					</VersionInfoKeys>
 				</Delphi.Personality>
 				<Platforms>

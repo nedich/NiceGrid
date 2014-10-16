@@ -32,14 +32,6 @@ package NiceGridXE;
 requires
   rtl,
   vcl,
-  inet,
-  soaprtl,
-  dbrtl,
-  nbi_singleunits,
-  jclvcl,
-  jcl,
-  adortl,
-  jediapi_singleunits,
   DesignIDE;
 
 contains
@@ -47,3 +39,4 @@ contains
   NiceGridReg in '..\NiceGridReg.pas';
 
 end.
+
