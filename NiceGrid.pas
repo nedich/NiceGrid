@@ -158,6 +158,7 @@ type
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
     procedure KeyPress(var Key: Char); override;
     procedure WMKillFocus(var Msg: TWMKillFocus); message WM_KILLFOCUS;
+    procedure CMWantSpecialKey(var Message: TWMKey); message CM_WANTSPECIALKEY;
   public
     constructor Create(AMediator: TNiceInplace); reintroduce;
     procedure ShowEdit(X, Y: Integer);
@@ -169,10 +170,9 @@ type
     m_Mediator: TNiceInplace;
     m_CellX, m_CellY: Integer;
   protected
-    //procedure CreateParams(var Params: TCreateParams); override;
     procedure Change; override;
-    //procedure KeyDown(var Key: Word; Shift: TShiftState); override;
     procedure KeyPress(var Key: Char); override;
+    procedure CMWantSpecialKey(var Message: TWMKey); message CM_WANTSPECIALKEY;
   public
     constructor Create(AMediator: TNiceInplace); reintroduce;
     procedure ShowEdit(X, Y: Integer);
@@ -476,6 +476,7 @@ type
     procedure TryEdit;
     procedure EndEdit;
     function RowsByIndex: TNiceGridRowsByIndexEnumerator;
+    function IsEmptyRow(y: Integer): Boolean;
   published
     property Enabled: Boolean read FEnabled write SetEnabled default True;
     property ColCount: Integer read GetColCount write SetColCount;
@@ -506,6 +507,7 @@ type
     property GutterFont: TFont read FGutterFont write SetGutterFont;
     property GutterStrings: TStrings read FGutterStrings write SetGutterStrings;
     property ShowFooter: Boolean read FShowFooter write SetShowFooter;
+    
     property OnDrawCell: TOnDrawCellEvent read FOnDrawCell write FOnDrawCell;
     property OnDrawHeader: TOnDrawHeaderEvent read FOnDrawHeader write FOnDrawHeader;
     property OnDrawGutter: TOnDrawHeaderEvent read FOnDrawGutter write FOnDrawGutter;
@@ -521,6 +523,7 @@ type
     property OnCellAssignment: TOnCellAssignment read FOnCellAssignment write FOnCellAssignment;
     property OnEditorCreated: TOnEditorCreated read FOnEditorCreated write FOnEditorCreated;
     property OnFormatText: TOnFormatText read FOnFormatText write FOnFormatText;
+    
     property Options: TNiceGridOptions read FOptions write SetOptions;
     property Font;
     property Anchors;
@@ -532,6 +535,7 @@ type
     property TabOrder;
     property TabStop default True;
     property Tag;
+    
     property OnClick;
     property OnDblClick;
     property OnMouseDown;
@@ -577,7 +581,7 @@ implementation
 {$R NiceCursors.res}
 
 uses
-  Math, Themes, UxTheme;
+  Math, Themes, UxTheme, MsgHlpr;
 
 const
   crPlus = 101;
@@ -1961,8 +1965,8 @@ begin
   isEditing := False;
   FEdit.HideEdit;
 
-  if not (csDestroying in ComponentState) then
-    SetFocus;
+//  if not (csDestroying in ComponentState) then
+//    SetFocus;
 end;
 
 
@@ -2486,7 +2490,7 @@ procedure TNiceGrid.KeyPress(var Key: Char);
   Result:    None
 -----------------------------------------------------------------------------}
 var
-  Pt: TPoint;
+  //Pt: TPoint;
   Allowed: Boolean;
 
 begin
@@ -2499,6 +2503,7 @@ begin
   if (ColCount = 0) or (FRowCount = 0)
     then Exit;
 
+  if(key<>#27) then
   if not FReadOnly then
   begin
     Allowed := True;
@@ -2656,6 +2661,8 @@ begin
   end;
 
   SetCapture(Handle);
+
+  //if(not IsEditing) then //meanwhile someone might have entered into edit mode
   SetFocus;
 
   inherited;
@@ -3125,7 +3132,6 @@ begin
   if EqualRect(FSelectArea, Value) and not Force
     then Exit;
 
-  //ForceHideCaret;
   Old := FSelectArea;
   FSelectArea := Value;
 
@@ -3216,8 +3222,6 @@ procedure TNiceGrid.WMSetFocus(var Msg: TWMSetFocus);
   Result:    None
 -----------------------------------------------------------------------------}
 begin
-//  CreateCaret(Handle, 0, 1, FDefRowHeight - 2);
-//  CaretVisible := False;
   InvalidateCells;
 
   if(IsEditing) then begin
@@ -3698,6 +3702,26 @@ end;
 
 
 
+function TNiceGrid.IsEmptyRow(y: Integer): Boolean;
+{-----------------------------------------------------------------------------
+  Procedure: IsEmptyRow
+  Author:    nbi
+  Date:      17-Oct-2014
+  Arguments: y: Integer
+  Result:    Boolean
+-----------------------------------------------------------------------------}
+var
+  x: Integer;
+begin
+  for x := 0 to ColCount-1 do
+    if(Cells[x, y]<>'') then
+      EXIT(False);
+  Result := True;
+end;
+
+
+
+
 function TNiceGrid.IsThemed: Boolean;
 {-----------------------------------------------------------------------------
   Procedure: IsThemed
@@ -4072,6 +4096,25 @@ end;
 
 { TNiceInplaceEdit }
 
+procedure TNiceInplaceEdit.CMWantSpecialKey(var Message: TWMKey);
+{-----------------------------------------------------------------------------
+  Procedure: CMWantSpecialKey
+  Author:    nbi
+  Date:      17-Oct-2014
+  Arguments: var Message: TWMKey
+  Result:    None
+-----------------------------------------------------------------------------}
+begin
+  inherited;
+  with Message do
+  case CharCode of
+    VK_RETURN, VK_ESCAPE, VK_LEFT, VK_UP, VK_RIGHT, VK_DOWN:
+      Result := 1;
+  end;
+end;
+
+
+
 constructor TNiceInplaceEdit.Create(AMediator: TNiceInplace);
 {-----------------------------------------------------------------------------
   Procedure: Create
@@ -4085,6 +4128,7 @@ begin
   inherited Create(m_Mediator.Grid);
   m_Alignment := haLeft;
   Parent := AMediator.Grid;
+  
   ParentColor := False;
   BorderStyle := bsNone;
   Left := -200;
@@ -4101,6 +4145,9 @@ begin
   inherited CreateParams(Params);
   Params.Style := Params.Style or Alignments[m_Alignment];
 end;
+
+
+
 
 procedure TNiceInplaceEdit.SetAlignment(Value: THorzAlign);
 begin
@@ -4128,6 +4175,8 @@ var
   Grid: TNiceGrid;
 begin
   Grid := m_Mediator.Grid;
+
+  SetWindowLong(Handle, GWL_HWNDPARENT, Parent.Handle); //this way the window is always on top of the owner such as a toolbox
   
   m_EditorType := Grid.Columns[X].EditorType;
   
@@ -4175,6 +4224,12 @@ procedure TNiceInplaceEdit.WMKillFocus(var Msg: TWMKillFocus);
 -----------------------------------------------------------------------------}
 begin
   m_Mediator.Grid.EndEdit;
+
+  if(msg.FocusedWnd = GetAncestor(m_Mediator.Grid.Handle, GA_ROOT)) then
+    m_Mediator.Grid.SetFocus;
+
+  //OutputDebugString(pwidechar(DescribeHandle(msg.FocusedWnd)));
+  
   inherited ;
 end;
 
@@ -4225,10 +4280,12 @@ procedure TNiceInplaceEdit.KeyDown(var Key: Word; Shift: TShiftState);
 -----------------------------------------------------------------------------}
 begin
   case Key of
-    VK_ESCAPE, VK_RETURN, VK_UP, VK_DOWN:
+    VK_ESCAPE, VK_RETURN, VK_UP, VK_DOWN, VK_F2:
     begin
-      //HideEdit;
       m_Mediator.Grid.EndEdit;
+
+      if(key=VK_UP) or (key=VK_DOWN) then
+        m_Mediator.Grid.Perform(WM_KEYDOWN, key, 0);
     end;
   else
     inherited;
@@ -4261,8 +4318,18 @@ var
     end
     else
     if(m_EditorType in [ngetEditInteger, ngetEditFloat]) then begin
-      if not (key in [#13 {enter}, #8 {backspace}, #27 {escape}, '0'..'9']) then
+      if not (key in [#13 {enter}, #8 {backspace}, #27 {escape}, '0'..'9', '-']) then
         Allowed := False;
+
+      if(key='-') then begin
+        if(pos(key, text)>0) then
+          Allowed := False //already have one '-' char
+        else begin
+          ///only allow '-' in the beginning
+          if(SelStart>0) then
+            Allowed := False;
+        end;
+      end;
     end;
   end;
   
@@ -4481,6 +4548,26 @@ end;
 
 
 
+procedure TNiceInplaceCombo.CMWantSpecialKey(var Message: TWMKey);
+{-----------------------------------------------------------------------------
+  Procedure: CMWantSpecialKey
+  Author:    nbi
+  Date:      17-Oct-2014
+  Arguments: var Message: TWMKey
+  Result:    None
+-----------------------------------------------------------------------------}
+begin
+  inherited;
+  with Message do
+  case CharCode of
+    VK_RETURN, VK_ESCAPE, VK_LEFT, VK_UP, VK_RIGHT, VK_DOWN:
+      Result := 1;
+  end;
+end;
+
+
+
+
 constructor TNiceInplaceCombo.Create(AMediator: TNiceInplace);
 {-----------------------------------------------------------------------------
   Procedure: Create
@@ -4601,6 +4688,7 @@ begin
   SetFocus;
   
 end;
+
 
 
 
