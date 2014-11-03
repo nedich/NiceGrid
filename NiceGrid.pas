@@ -173,6 +173,8 @@ type
     procedure Change; override;
     procedure KeyPress(var Key: Char); override;
     procedure CMWantSpecialKey(var Message: TWMKey); message CM_WANTSPECIALKEY;
+    procedure WMKillFocus(var Msg: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMSetFocus(var Msg: TWMSetFocus); message WM_SETFOCUS;
   public
     constructor Create(AMediator: TNiceInplace); reintroduce;
     procedure ShowEdit(X, Y: Integer);
@@ -547,27 +549,6 @@ type
     property PopupMenu;
   end;
 
-//  TNiceGridSync = class(TNiceGrid)
-//  private
-//    FGrid: TNiceGrid;
-//    procedure SetGrid(const Value: TNiceGrid);
-//    procedure SyncDeleteRow(Sender: TObject; ARow: Integer);
-//    procedure SyncInsertRow(Sender: TObject; ARow: Integer);
-//    procedure SyncColRow(Sender: TObject; ACol, ARow: Integer);
-//  protected
-//    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-//    procedure SetScrollBar(AKind, AMax, APos, AMask: Integer); override;
-//    procedure ShowHideScrollBar(HorzVisible, VertVisible: Boolean); override;
-//    property OnDeleteRow;
-//    property OnInsertRow;
-//    property OnColRowChanged;
-//  public
-//    constructor Create(AOwner: TComponent); override;
-//  published
-//    property Grid: TNiceGrid read FGrid write SetGrid;
-//  end;
-
-
   function DrawString(Canvas: TCanvas; Str: string; Rc: TRect;
     HorzAlign: THorzAlign; VertAlign: TVertAlign; IsEditing: Boolean): TPoint;
 
@@ -581,7 +562,7 @@ implementation
 {$R NiceCursors.res}
 
 uses
-  Math, Themes, UxTheme, MsgHlpr;
+  Math, Themes, UxTheme;
 
 const
   crPlus = 101;
@@ -785,6 +766,8 @@ begin
     SetScrollBar(SB_HORZ, 0, FHorzOffset, SIF_POS);
     InvalidateRightWard(FixedWidth);
   end;
+
+  EndEdit;
 end;
 
 procedure TNiceGrid.WMVScroll(var Msg: TWMHScroll);
@@ -814,6 +797,8 @@ begin
     SetScrollBar(SB_VERT, 0, FVertOffset, SIF_POS);
     InvalidateDownWard(FixedHeight);
   end;
+
+  EndEdit;
 end;
 
 procedure TNiceGrid.SetColCount(Value: Integer);
@@ -1964,9 +1949,6 @@ begin
 
   isEditing := False;
   FEdit.HideEdit;
-
-//  if not (csDestroying in ComponentState) then
-//    SetFocus;
 end;
 
 
@@ -4686,12 +4668,33 @@ begin
   end;
 
   SetFocus;
-  
+end;
+
+
+
+procedure TNiceInplaceCombo.WMKillFocus(var Msg: TWMKillFocus);
+{-----------------------------------------------------------------------------
+  Procedure: WMKillFocus
+  Author:    nbi
+  Date:      31-Oct-2014
+  Arguments: var Msg: TWMKillFocus
+  Result:    None
+-----------------------------------------------------------------------------}
+begin
+  inherited;
+  if(msg.FocusedWnd = GetAncestor(m_Mediator.Grid.Handle, GA_ROOT)) then
+    m_Mediator.Grid.SetFocus;
+    
+  m_Mediator.Grid.EndEdit;
 end;
 
 
 
 
+procedure TNiceInplaceCombo.WMSetFocus(var Msg: TWMSetFocus);
+begin
+  inherited;
+end;
 
 { TNiceGridRowsByIndexEnumerator }
 
