@@ -238,6 +238,8 @@ type
   TOnColRowChanged = procedure (Sender: TObject; Col, Row: Integer) of object;
 
   TOnEditorCreated = procedure (Grid: TNiceGrid; EditorControl: TWinControl) of object;
+  
+  TOnGetCellColor = function (Grid: TNiceGrid; Col, Row: Integer; var Handled: boolean): TColor of object;  
 
   TNiceGridRowsByIndexEnumerator = record
     m_NiceGrid: TNiceGrid;
@@ -298,6 +300,7 @@ type
     FCol: Integer;
     FRow: Integer;
     FCol2, FRow2: Integer; // Selection
+    FColEdit, FRowEdit: Integer; // Selection    
     FSelectArea: TRect;
 
     SmallBox: TRect;
@@ -325,8 +328,11 @@ type
     FOnInsertRow: TOnRowEvent;
     FOnDeleteRow: TOnRowEvent;
     FOnCellAssignment: TOnCellAssignment;
-    FOnEditorCreated: TOnEditorCreated;  //n@2014-10-16
-    FOnFormatText: TOnFormatText;    //n@2014-10-16
+    FOnEditorCreated: TOnEditorCreated;
+    FOnFormatText: TOnFormatText;
+    FOnEditorCreating: TNotifyEvent;
+    FOnDrawBackground: TOnDrawCellEvent;
+    FOnGetCellColor: TOnGetCellColor;
     FGutterStrings: TStrings;
     FShowFooter: Boolean;
     FFooterFont: TFont;
@@ -525,6 +531,9 @@ type
     property OnCellAssignment: TOnCellAssignment read FOnCellAssignment write FOnCellAssignment;
     property OnEditorCreated: TOnEditorCreated read FOnEditorCreated write FOnEditorCreated;
     property OnFormatText: TOnFormatText read FOnFormatText write FOnFormatText;
+    property OnEditorCreating: TNotifyEvent read FOnEditorCreating write FOnEditorCreating;
+    property OnDrawBackground: TOnDrawCellEvent read FOnDrawBackground write FOnDrawBackground;
+    property OnGetCellColor: TOnGetCellColor read FOnGetCellColor write FOnGetCellColor;    
     
     property Options: TNiceGridOptions read FOptions write SetOptions;
     property Font;
@@ -678,7 +687,10 @@ begin
   Mergeds := TList.Create;
 
   FOptions := [ngoThemed];
-  
+
+  FOnDrawBackground := nil;
+  FOnEditorCreating := nil;
+  FOnGetCellColor := nil;
 end;
 
 
@@ -1095,11 +1107,29 @@ begin
   t.Free;
 end;
 
+
+
+
 function TNiceGrid.GetCellColor(X, Y: Integer): TColor;
+{-----------------------------------------------------------------------------
+  Procedure: GetCellColor
+  Author:    nbi
+  Date:      28-Jan-2015
+  Arguments: X, Y: Integer
+  Result:    TColor
+-----------------------------------------------------------------------------}
 var
   cl: TColor;
   R: TRect;
+  Handled: boolean;
 begin
+  if(Assigned(FOnGetCellColor)) then begin
+    Handled := False;
+    Result := FOnGetCellColor(Self, X,Y, Handled);
+    if(Handled) then 
+      EXIT;
+  end;
+
   cl := FColumns[x].Color;
   if Odd(Y) then
   begin
@@ -1314,8 +1344,8 @@ begin
       Pen.Color := FGridColor;
       Brush.Color := GetCellColor(X, Y);
 
-//      if Assigned(FOnDrawCell)
-//        then FOnDrawCell(Self, Canvas, X, Y, Rc, Handled);
+      if Assigned(FOnDrawBackground)
+        then FOnDrawBackground(Self, Canvas, X, Y, Rc, Handled);
 
       if not Handled then
       begin
@@ -1944,11 +1974,21 @@ procedure TNiceGrid.EndEdit;
   Arguments: None
   Result:    None
 -----------------------------------------------------------------------------}
+var
+  str, Olds: string;
 begin
   if(not isEditing) then EXIT;
 
   isEditing := False;
   FEdit.HideEdit;
+  
+  str := GetCell(Col, Row);
+  
+  if Assigned(FOnCellAssignment)
+    then FOnCellAssignment(Self, FColEdit, FRowEdit, str);
+
+  if (Str <> Olds)
+    then InternalSetCell(FColEdit, FRowEdit, Str, True);
 end;
 
 
@@ -2343,12 +2383,6 @@ begin
             //
             OldS := GetCell(Col, Row);
             Str := OldS;
-
-            if Assigned(FOnCellAssignment)
-              then FOnCellAssignment(Self, Col, Row, Str);
-
-            if (Str <> Olds)
-              then InternalSetCell(Col, Row, Str, True);
 
             FillDown := FAutoFillDown and (Copy(Str, Length(Str), 1) = '*');
             FillRight := FAutoFillRight and (Copy(Str, Length(Str), 1) = '>');
@@ -2905,6 +2939,12 @@ procedure TNiceGrid.TryEdit;
 begin
   if (not FReadOnly) and (not FColumns[FCol].FReadOnly) then begin
     try
+      FColEdit := Col;
+      FRowEdit := Row;
+      
+      if(Assigned(FOnEditorCreating)) then
+        FOnEditorCreating(Self);
+        
       EnsureVisible(FCol, FRow);
       FEdit.ShowEdit(FCol, FRow);
       IsEditing := True;
@@ -4300,7 +4340,7 @@ var
     end
     else
     if(m_EditorType in [ngetEditInteger, ngetEditFloat]) then begin
-      if not (key in [#13 {enter}, #8 {backspace}, #27 {escape}, '0'..'9', '-']) then
+      if not (ansichar(key) in [#13 {enter}, #8 {backspace}, #27 {escape}, '0'..'9', '-']) then
         Allowed := False;
 
       if(key='-') then begin
@@ -4597,7 +4637,7 @@ procedure TNiceInplaceCombo.KeyPress(var Key: Char);
   Result:    None
 -----------------------------------------------------------------------------}
 begin
-  if(key in [#13, #27]) then begin
+  if(ansichar(key) in [#13, #27]) then begin
     Mediator.Grid.EndEdit;
   end;
 

@@ -46,6 +46,10 @@ type
     procedure xbEnabledClick(Sender: TObject);
     procedure NiceGrid1CellChanging(Sender: TObject; Col, Row: Integer; var CanChange: Boolean);
     procedure NiceGrid1FormatText(Grid: TNiceGrid; X,Y: Integer; var CellText: string);
+    procedure NiceGrid1DrawBackground(Sender: TObject; ACanvas: TCanvas; X, Y: Integer; Rc: TRect;
+      var Handled: Boolean);
+    procedure NiceGrid1EditorCreating(Sender: TObject);
+    procedure NiceGrid1CellAssignment(Sender: TObject; Col, Row: Integer; var Str: string);
   private
     { Private declarations }
   public
@@ -123,13 +127,26 @@ begin
     NiceGrid1[3, x] := FormatFloat('###,###,##0.##', Random(20000000));
     NiceGrid1[4, x] := IntToStr(Random(2000));
   end;
+  NiceGrid1.cells[3,6] := 'ReadOnly';
   NiceGrid1.EndUpdate;
   CheckBox2Click(nil);
+end;
+
+procedure TForm1.NiceGrid1CellAssignment(Sender: TObject; Col, Row: Integer; var Str: string);
+begin
+  str := 'edited';
 end;
 
 procedure TForm1.NiceGrid1CellChanging(Sender: TObject; Col, Row: Integer; var CanChange: Boolean);
 begin
   //
+end;
+
+procedure TForm1.NiceGrid1DrawBackground(Sender: TObject; ACanvas: TCanvas; X, Y: Integer;
+  Rc: TRect; var Handled: Boolean);
+begin
+  if(x=3) and (y=6) then
+    ACanvas.Brush.color := clSilver; //colorize as readonly
 end;
 
 procedure TForm1.NiceGrid1DrawHeader(Sender: TObject; ACanvas: TCanvas;
@@ -162,6 +179,12 @@ end;
 
 
 
+
+procedure TForm1.NiceGrid1EditorCreating(Sender: TObject);
+begin
+  if(NiceGrid1.Col=3) and (NiceGrid1.Row=6) then
+    ABORT;
+end;
 
 procedure TForm1.NiceGrid1FormatText(Grid: TNiceGrid; X,Y: Integer; var CellText: string);
 {-----------------------------------------------------------------------------

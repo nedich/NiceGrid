@@ -119,8 +119,11 @@ object Form1: TForm1
     OnDrawHeader = NiceGrid1DrawHeader
     OnCellChanging = NiceGrid1CellChanging
     OnInsertRow = NiceGrid1InsertRow
+    OnCellAssignment = NiceGrid1CellAssignment
     OnEditorCreated = NiceGrid1EditorCreated
     OnFormatText = NiceGrid1FormatText
+    OnEditorCreating = NiceGrid1EditorCreating
+    OnDrawBackground = NiceGrid1DrawBackground
     Options = [ngoThemed]
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
