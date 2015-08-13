@@ -23,16 +23,20 @@ Since it is a new component, there are several main differences between NiceGrid
 
   * FixedRows -> Header, FixedCols -> Gutter. 
 
-2014-10-15
+2014-10-15, author Nedko Ivanov
 
  * Added Options property (ngoMultiCellSelect, ngoThemed, ngoExcel)
    * ngoMultiCellSelect - allows multi cell select
    * ngoThemed - use Windows theme support instead of original owner drawn selection
    * ngoExcel - enable/disable excel like capabilities (the small dot on the right bottom selection corner)
- * Added property EditorType to Column
+ * Added property EditorType to Column : (ngetEdit, ngetEditInteger, ngetEditFloat, ngetCombo, ngetComboNoEditText)
  * Added key F2 for begin edit
- * Added event OnEditorCreated(nicegrid, editcontrol)
+ * Added event OnEditorCreating and OnEditorCreated (allows to fill in lines in combo box cell editor)
  * Removed component TNiceGridSync
  * Removed additinal support for caret
+ * Added event OnFormatText to both grid and column objects
+ * Added event OnGetCellColor
+ * Added event OnDrawBackground - allows the app to draw the background itself instead by the default grid code
+ * Added enumerator for enumerating grid rows with the "for-in" statement
 
 For sample see BasicDemo
