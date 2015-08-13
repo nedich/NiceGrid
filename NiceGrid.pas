@@ -151,6 +151,7 @@ type
     m_Alignment: THorzAlign;
     m_nCellX, m_nCellY: Integer;
     m_EditorType: TNiceGridInplaceEditorType;
+    m_bMuteSetOnChange: Boolean;
     procedure SetAlignment(Value: THorzAlign);
   protected
     procedure CreateParams(var Params: TCreateParams); override;
@@ -1982,7 +1983,8 @@ begin
   isEditing := False;
   FEdit.HideEdit;
   
-  str := GetCell(Col, Row);
+  str := GetCell(FColEdit, FRowEdit);
+  olds := str;
   
   if Assigned(FOnCellAssignment)
     then FOnCellAssignment(Self, FColEdit, FRowEdit, str);
@@ -2157,7 +2159,6 @@ var
   FillDown: Boolean;
   FillRight: Boolean;
   Old: Integer;
-  OldS: string;
 
   procedure UpdateColRow;
   begin
@@ -2381,8 +2382,7 @@ begin
             TryEdit;
           end else begin
             //
-            OldS := GetCell(Col, Row);
-            Str := OldS;
+            Str := GetCell(Col, Row);
 
             FillDown := FAutoFillDown and (Copy(Str, Length(Str), 1) = '*');
             FillRight := FAutoFillRight and (Copy(Str, Length(Str), 1) = '>');
@@ -4156,6 +4156,7 @@ begin
   Left := -200;
   Top := -200;
   Visible := False;
+  m_bMuteSetOnChange := False;
 end;
 
 
@@ -4207,7 +4208,11 @@ begin
   Column := Grid.FColumns[x];
   Color := Grid.GetCellColor(X, Y);
   SetAlignment(Column.FHorzAlign);
+  
+  m_bMuteSetOnChange := True;
   Text := Grid.SafeGetCell(X, Y);
+  m_bMuteSetOnChange := False;
+  
   Font.Assign(Column.FFont);
 
   Rc := Grid.GetCellRect(X, Y);
@@ -4286,7 +4291,8 @@ end;
 procedure TNiceInplaceEdit.Change;
 begin
   inherited;
-  m_Mediator.Grid.InternalSetCell(m_nCellX, m_nCellY, Text, True);
+  if(not m_bMuteSetOnChange) then
+    m_Mediator.Grid.InternalSetCell(m_nCellX, m_nCellY, Text, True);
 end;
 
 
